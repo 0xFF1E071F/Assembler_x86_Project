@@ -9,16 +9,20 @@ include \masm32\include\masm32rt.inc
 includelib \masm32\lib\kernel32.lib
 
 .data 
-	iteration_max db 50
-	z db 0
-	i db 0
+	iteration_max 	db 50
+	z_r 			db 0
+	z_i 			db 0
+	i 				db 0
 	
 .data? 
-	c db ?
-	x db ?
-	y db ?
-
+	c_r 			db ?
+	c_i 			db ?
+	x 				db ?
+	y 				db ?
+	tmp				db ?
+	
 .code 
+
 start: 
 	add c, x
 	mov eax, y
@@ -27,12 +31,26 @@ start:
 	add c, eax 
 	
 	tantque:
+	
 		cmp z, 2
+		jb fin_tantque
 		cmp i, iteration_max
+		jb fin
+		
 		mov ecx, z
 		mul ecx, z
+		add z, ecx
+		add z, c
+		inc i
 		
-	fin:
+	fin_tantque:
+	
+	cmp i, iteraration_max
+	je dessin
+	
+	dessin:
+	
+	fin_dessin:
 	
 	inkey  ; attente d'un appui de touche par l'utilisateur (met le programme en pause).
     
