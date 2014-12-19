@@ -67,8 +67,8 @@ includelib masm32.lib
 	tmp				REAL4 	?
 	i 				REAL4 	?
 	
-	x				dd 		?
-	y				dd 		?
+	x				REAL4 	?
+	y				REAL4 	?
 	
 	result1			REAL4 	?
 	result2			REAL4 	?
@@ -232,31 +232,33 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
         
         cmp lParam,0
         je fin_messages 							; si lParam=0 alors le message vient d'un menu : on n'en a pas ici
+    	
     												; lParam différent de 0 donc message envoyé par un Control
     	cmp ax,ButtonID								; ax = mot de poids faible de wParam = ID du contrôle qui a envoyé le message
         jne fin_messages 							; si ce n'est pas le bouton qui a envoyé le message
+ 		
  													; si ax=ButtonID
         	shr eax,16 								; rotation de 16 bits à droite (poids fort devient poids faible : ax = poids fort)
            	cmp ax,BN_CLICKED						; mot de poids fort de wParam = code de notification du contrôle
         	jne fin_messages 						; si ce n'est pas un clic sur le bouton qui a envoyé le message
        												; si ax=BN_CLICKED
-       			invoke GetWindowText,hwndEdit1,ADDR buffer,512		; récupération du contenu de l'EDIT dans buffer
-        		invoke atol, addr buffer							; conversion du contenu du buffer en DWORD dans eax 
-       			invoke GetWindowText,hwndEdit2,ADDR buffer2,512		; récupération du contenu de l'EDIT dans buffer
-        		invoke atol, addr buffer2							; conversion du contenu du buffer en DWORD dans eax 
-      			invoke GetWindowText,hwndEdit3,ADDR buffer2,512		; récupération du contenu de l'EDIT dans buffer
-        		invoke atol, addr buffer3							; conversion du contenu du buffer en DWORD dans eax 
-        		invoke GetWindowText,hwndEdit4,ADDR buffer2,512		; récupération du contenu de l'EDIT dans buffer
-        		invoke atol, addr buffer4							; conversion du contenu du buffer en DWORD dans eax 
-        		invoke GetWindowText,hwndEdit5,ADDR buffer2,512		; récupération du contenu de l'EDIT dans buffer
-        		invoke atol, addr buffer5							; conversion du contenu du buffer en DWORD dans eax 
+       			invoke GetWindowText,hwndEdit1,ADDR buffer,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer			; conversion du contenu du buffer en DWORD dans eax 
+       			invoke GetWindowText,hwndEdit2,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer2			; conversion du contenu du buffer en DWORD dans eax 
+      			invoke GetWindowText,hwndEdit3,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer3			; conversion du contenu du buffer en DWORD dans eax 
+        		invoke GetWindowText,hwndEdit4,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer4			; conversion du contenu du buffer en DWORD dans eax 
+        		invoke GetWindowText,hwndEdit5,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer5			; conversion du contenu du buffer en DWORD dans eax 
       			
     paint:
     	invoke BeginPaint, hWnd, ADDR ps			; lance le dessin de la fenêtre
 		mov hdc, eax								; BeginPaint retourne le handle du contexte où on dessine
 		
 			mov x, 0
-	
+				
 			;fld image_x									;initialisation d'image_x
 			;fadd x2
 			;fsub x1
@@ -269,10 +271,10 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 			;fimul zoom
 			;fstp image_y
 						
-			pour_x:									;boucle for: tant que x< image_x par pas de 1
+			pour_x:										;boucle for: tant que x< image_x par pas de 1
 				
 				mov y, 0
-				
+											
 				pour_y:								;boucle for: tant que y<image_y par pas de 1
 					
 					fld c_r							;definition du c réel
@@ -297,21 +299,12 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 						mov result2, 0
 						mov result3, 0
 						
-						fld z_r						;formule z_r² + z_i²
-						fmul z_r
-						fld z_i
-						fmul z_i
-						fadd st(0), st(1)
-						fstp result1
-						cmp result1, 4				;condtion tant que
-						jge fin_tantque
-						
 						fld i
 						fild iteration_max
 						fcomip st(0), st(1)
 						fstp result2	
-						jge fin_tantque
-						
+						jl fin_tantque
+				
 						fld tmp						;initialisation de tmp
 						fadd z_r
 						fstp tmp
@@ -331,8 +324,16 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 						fstp z_i
 
 						inc i						;incrémentation de i
+						
+						fld z_r						;formule z_r² + z_i²
+						fmul z_r
+						fld z_i
+						fmul z_i
+						fadd st(0), st(1)
+						fstp result1
 					
-						jmp tantque
+						cmp result1, 4				;condtion tant que
+						jl fin_tantque
 						
 					fin_tantque:
 			
@@ -355,8 +356,7 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 					fld y
 					fcomip st(0), st(1)
 					fstp result1
-					jge fin_pour_y
-					jmp pour_y
+					jl fin_pour_y
 					
 				fin_pour_y:
 				
@@ -368,8 +368,7 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 				fld x
 				fcomip st(0), st(1)
 				fstp result1
-				jge fin_pour_x				
-				jmp pour_x
+				jl fin_pour_x				
 						
 			fin_pour_x:
 				

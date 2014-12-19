@@ -240,16 +240,16 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
            	cmp ax,BN_CLICKED						; mot de poids fort de wParam = code de notification du contrôle
         	jne fin_messages 						; si ce n'est pas un clic sur le bouton qui a envoyé le message
        												; si ax=BN_CLICKED
-       			invoke GetWindowText,hwndEdit1,ADDR buffer,512		; récupération du contenu de l'EDIT dans buffer
-        		invoke atol, addr buffer							; conversion du contenu du buffer en DWORD dans eax 
-       			invoke GetWindowText,hwndEdit2,ADDR buffer2,512		; récupération du contenu de l'EDIT dans buffer
-        		invoke atol, addr buffer2							; conversion du contenu du buffer en DWORD dans eax 
-      			invoke GetWindowText,hwndEdit3,ADDR buffer2,512		; récupération du contenu de l'EDIT dans buffer
-        		invoke atol, addr buffer3							; conversion du contenu du buffer en DWORD dans eax 
-        		invoke GetWindowText,hwndEdit4,ADDR buffer2,512		; récupération du contenu de l'EDIT dans buffer
-        		invoke atol, addr buffer4							; conversion du contenu du buffer en DWORD dans eax 
-        		invoke GetWindowText,hwndEdit5,ADDR buffer2,512		; récupération du contenu de l'EDIT dans buffer
-        		invoke atol, addr buffer5							; conversion du contenu du buffer en DWORD dans eax 
+       			invoke GetWindowText,hwndEdit1,ADDR buffer,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer			; conversion du contenu du buffer en DWORD dans eax 
+       			invoke GetWindowText,hwndEdit2,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer2			; conversion du contenu du buffer en DWORD dans eax 
+      			invoke GetWindowText,hwndEdit3,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer3			; conversion du contenu du buffer en DWORD dans eax 
+        		invoke GetWindowText,hwndEdit4,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer4			; conversion du contenu du buffer en DWORD dans eax 
+        		invoke GetWindowText,hwndEdit5,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer5			; conversion du contenu du buffer en DWORD dans eax 
       			
     paint:
     	invoke BeginPaint, hWnd, ADDR ps			; lance le dessin de la fenêtre
@@ -269,7 +269,7 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 			;fimul zoom
 			;fstp image_y
 						
-			pour_x:									;boucle for: tant que x< image_x par pas de 1
+			pour_x:										;boucle for: tant que x< image_x par pas de 1
 				
 				mov y, 0
 				

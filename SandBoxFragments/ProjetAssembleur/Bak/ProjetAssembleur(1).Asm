@@ -269,7 +269,7 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 			;fimul zoom
 			;fstp image_y
 						
-			pour_x:									;boucle for: tant que x< image_x par pas de 1
+			pour_x:										;boucle for: tant que x< image_x par pas de 1
 				
 				mov y, 0
 				
