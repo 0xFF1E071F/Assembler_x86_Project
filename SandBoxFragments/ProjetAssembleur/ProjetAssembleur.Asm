@@ -71,14 +71,11 @@ includelib masm32.lib
 	x				REAL4 	?
 	y				REAL4 	?
 	
-	image_x			dd	 	?
-	image_y			dd	 	?
+	image_x			REAL4 	?
+	image_y			REAL4 	?
 	
 	result1			REAL4 	?
 	result2			REAL4 	?
-	result3			REAL4 	?
-	result4			REAL4 	?
-	result5			REAL4 	?
 	
 	hInstance HINSTANCE 	? 
 	CommandLine LPSTR 		? 
@@ -95,7 +92,7 @@ includelib masm32.lib
 
 .const 
 	ButtonID 		equ 	1         	; le n°ID du Control de type Button 
-	EditID 			equ 	           	; le n°ID du Control de type 'Zone d'édition' (de saisie de texte) 
+	EditID 			equ 	2          	; le n°ID du Control de type 'Zone d'édition' (de saisie de texte) 
 
 .code 
 start: 
@@ -256,24 +253,24 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 		mov y,0
 				
 		;initialisation d'image_x
-		fild image_x
+		fld image_x
 		fadd x2
 		fsub x1
 		fimul zoom
-		fistp image_x
+		fstp image_x
 	
 		;initialisation d'image_y
-		fild image_y
+		fld image_y
 		fadd y2
 		fsub y1
 		fimul zoom
-		fistp image_y
+		fstp image_y
 	
 		;boucle for: tant que x< image_x par pas de 1
 		pour_x:
 			mov result1, 0
 		
-			fild image_x
+			fld image_x
 			fld x
 			fcomip st(0), st(1)
 			fstp result1
@@ -307,9 +304,6 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 					;initialisation de variables nécessaires aux calculs des formules
 					mov result1, 0
 					mov result2, 0
-					mov result3, 0
-					mov result4, 0
-					mov result5, 0
 				
 					;formule z_r² + z_i²
 					fld z_r
