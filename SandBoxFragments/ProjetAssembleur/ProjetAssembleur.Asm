@@ -9,30 +9,30 @@ include \masm32\include\masm32rt.inc
 includelib \masm32\lib\kernel32.lib
 
 .data 
-	z_r 			REAL4 0
-	z_i 			REAL4 0
-	c_r 			REAL4 0
-	c_i 			REAL4 0
-	tmp				REAL4 0
-	i 				REAL4 0
+	z_r 			REAL4 	0.0
+	z_i 			REAL4 	0.0
+	c_r 			REAL4 	0.0
+	c_i 			REAL4 	0.0
+	tmp				REAL4 	0.0
+	i 				REAL4 	0.0
 	
-	x				REAL4 0
-	y				REAL4 0
-	x1				REAL4 -2.1
-	x2				REAL4 0.6
-	y1				REAL4 -1.2
-	y2				REAL4 1.2
+	x				REAL4 	0.0
+	y				REAL4 	0.0
+	x1				REAL4 	-2.1
+	x2				REAL4 	0.6
+	y1				REAL4 	-1.2
+	y2				REAL4 	1.2
 	
-	image_x			REAL4 0
-	image_y			REAL4 0
-	zoom			REAL4 100
-	iteration_max 	REAL4 50
+	image_x			REAL4 	0.0
+	image_y			REAL4 	0.0
+	zoom			dd 		100
+	iteration_max 	dd 		50
 	
-	result1			REAL4 0
-	result2			REAL4 0
-	result3			REAL4 0
-	result4			REAL4 0
-	result5			REAL4 0
+	result1			REAL4 	0.0
+	result2			REAL4 	0.0
+	result3			REAL4 	0.0
+	result4			REAL4 	0.0
+	result5			REAL4 	0.0
 	
 .data? 
 	
@@ -57,33 +57,42 @@ start:
 	
 	
 	;initialisation d'image_x
-	mov image_x, x2
-	sub image_x, x1
-	mul image_x, zoom
+	fld image_x
+	fadd x2
+	fsub x1
+	fimul zoom
+	fstp image_x
 	
 	;initialisation d'image_y
-	mov image_y, y2
-	sub image_y, y1
-	mul image_y, zoom
+	fld image_y
+	fadd y2
+	fsub y1
+	fimul zoom
+	fstp image_y
 	
 	mov x, 0
+	mov y, 0
+	
 	;boucle for: tant que x< image_x par pas de 1
 	pour_x:
 		cmp x, image_x
 		jl fin_pour_x
 		
-		mov y, 0
 		;boucle for: tant que y<image_y par pas de 1
 		pour_y:
 			;definition du c réel
-			mov c_r, x
-			div c_r, zoom
-			add c_r, x1
+			fld c_r
+			fadd x
+			fdiv zoom
+			fadd x1
+			fstp c_r
 			
 			;définition du c iréel
-			mov c_i, y
-			div c_i, zoom
-			add c_i, y1
+			fld c_i
+			fadd y
+			fdiv zoom
+			fadd y1
+			fstp c_i
 			
 			;initialisation de variables
 			mov z_r, 0
@@ -100,11 +109,13 @@ start:
 				mov result5, 0
 				
 				;formule z_r² + z_i²
-				mov result1, z_r
-				mul result1, z_r
-				mov result2, z_i
-				mul result2, z_i
-				add result1, result2
+				fld result1
+				fadd z_r
+				fmul z_r
+				fld z_i
+				fmul z_i
+				fadd st(0), st(1)
+				fstp result1
 				
 				;condtion tant que
 				cmp result1, 4
@@ -116,21 +127,20 @@ start:
 				mov tmp, z_r
 				
 				;formule z_r = z_r² - z_i² + c_r
-				mov result3, z_r
-				mul result3, z_r
-				mov result4, z_i
-				mul result4, z_i
-				sub result3, result4
-				add result3, c_r
-				mov z_r, result3
+				fld z_r
+				fmul z_r
+				fld z_i
+				fmul z_i
+				fsubp st(1), st(0)
+				fadd c_r
+				fstp z_r
 				
 				;formule z_i = 2*z_i*tmp + c_i
-				mov result5, z_i
-				mul result5, 2
-				mul result5, z_i
-				mul result5, tmp
-				add result5, c_i
-				mov z_i, result5
+				fld z_i
+				fimul 2
+				fmul tmp
+				fadd c_i
+				fstp z_i
 				
 				;incrémentation de i
 				inc i
