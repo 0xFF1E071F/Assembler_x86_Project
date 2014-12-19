@@ -76,6 +76,7 @@ includelib masm32.lib
 	
 	result1			REAL4 	?
 	result2			REAL4 	?
+	result3			REAL4 	?
 	
 	hInstance HINSTANCE 	? 
 	CommandLine LPSTR 		? 
@@ -260,12 +261,6 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
     	invoke BeginPaint, hWnd, ADDR ps			; lance le dessin de la fenêtre
 		mov hdc, eax								; BeginPaint retourne le handle du contexte où on dessine
 		
-		boucle:
-			invoke SetPixel,hdc,x,y,0FF00FFh	; affiche un point à la coordonnée (x,y) 
-													; de couleur FF00FF (BBVVRR) 
-													; où BB=niveau de bleu sur 2 octets
-													; où VV=niveau de vert sur 2 octets
-													; où RR=niveau de rouge sur 2 octets	
 			mov x, 0
 			mov y, 0
 				
@@ -282,6 +277,8 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 			fstp image_y
 						
 			pour_x:										;boucle for: tant que x< image_x par pas de 1
+				invoke SetPixel,hdc,x,y,00FF000h		; affiche un point à la coordonnée (x,y) 			
+				
 				mov result1, 0
 		
 				fld image_x
@@ -291,7 +288,15 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 				jl fin_pour_x
 											
 				pour_y:								;boucle for: tant que y<image_y par pas de 1
-		
+					
+					mov result1, 0
+					
+					fld image_y
+					fld y
+					fcomip st(0), st(1)
+					fstp result1
+					jl fin_pour_y
+					
 					fld c_r							;definition du c réel
 					fadd x
 					fidiv zoom
@@ -312,7 +317,8 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 			
 						mov result1, 0				;initialisation de variables nécessaires aux calculs des formules
 						mov result2, 0
-				
+						mov result3, 0
+						
 						fld z_r						;formule z_r² + z_i²
 						fmul z_r
 						fld z_i
@@ -322,6 +328,7 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 					
 						cmp result1, 4				;condtion tant que
 						jl fin_tantque
+						
 						fld i
 						fild iteration_max
 						fcomip st(0), st(1)
@@ -354,18 +361,28 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 					fld i
 					fild iteration_max
 					fcomip st(0), st(1)
-					fstp result2
-				
+					fstp result3
+					je sinon
+					invoke SetPixel,hdc,x,y,00FF000h	; affiche un point à la coordonnée (x,y) 
+													; de couleur FF00FF (BBVVRR) 
+													; où BB=niveau de bleu sur 2 octets
+													; où VV=niveau de vert sur 2 octets
+													; où RR=niveau de rouge sur 2 octets	
+			
+					sinon:
+						invoke SetPixel,hdc,x,y,0F000FFh	; affiche un point à la coordonnée (x,y) 
+													; de couleur FF00FF (BBVVRR) 
+													; où BB=niveau de bleu sur 2 octets
+													; où VV=niveau de vert sur 2 octets
+													; où RR=niveau de rouge sur 2 octets	
+			
 					inc y
 		
 				fin_pour_y:
 		
 				inc x
-		
+						
 			fin_pour_x:
-			
-			cmp x, 5
-			jne boucle
 				
         invoke EndPaint, hWnd, ADDR ps ; fin du dessin de la fenêtre
         	
