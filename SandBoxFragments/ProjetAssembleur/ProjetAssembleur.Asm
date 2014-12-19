@@ -34,6 +34,9 @@ includelib masm32.lib
 	y1				REAL4 	-1.2
 	y2				REAL4 	1.2
 	
+	image_x			REAL4 	270.0
+	image_y			REAL4 	240.0
+	
 	zoom			dd 		100
 	iteration_max 	dd 		50
 	deux 			dd 		2
@@ -71,8 +74,7 @@ includelib masm32.lib
 	x				REAL4 	?
 	y				REAL4 	?
 	
-	image_x			REAL4 	?
-	image_y			REAL4 	?
+
 	
 	result1			REAL4 	?
 	result2			REAL4 	?
@@ -264,38 +266,21 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 			mov x, 0
 			mov y, 0
 				
-			fld image_x									;initialisation d'image_x
-			fadd x2
-			fsub x1
-			fimul zoom
-			fstp image_x
+			;fld image_x									;initialisation d'image_x
+			;fadd x2
+			;fsub x1
+			;fimul zoom
+			;fstp image_x
 	
-			fld image_y									;initialisation d'image_y
-			fadd y2
-			fsub y1
-			fimul zoom
-			fstp image_y
+			;fld image_y									;initialisation d'image_y
+			;fadd y2
+			;fsub y1
+			;fimul zoom
+			;fstp image_y
 						
 			pour_x:										;boucle for: tant que x< image_x par pas de 1
-				invoke SetPixel,hdc,x,y,00FF000h		; affiche un point à la coordonnée (x,y) 			
-				
-				mov result1, 0
-		
-				fld image_x
-				fld x
-				fcomip st(0), st(1)
-				fstp result1
-				jl fin_pour_x
 											
 				pour_y:								;boucle for: tant que y<image_y par pas de 1
-					
-					mov result1, 0
-					
-					fld image_y
-					fld y
-					fcomip st(0), st(1)
-					fstp result1
-					jl fin_pour_y
 					
 					fld c_r							;definition du c réel
 					fadd x
@@ -318,16 +303,6 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 						mov result1, 0				;initialisation de variables nécessaires aux calculs des formules
 						mov result2, 0
 						mov result3, 0
-						
-						fld z_r						;formule z_r² + z_i²
-						fmul z_r
-						fld z_i
-						fmul z_i
-						fadd st(0), st(1)
-						fstp result1
-					
-						cmp result1, 4				;condtion tant que
-						jl fin_tantque
 						
 						fld i
 						fild iteration_max
@@ -354,7 +329,17 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 						fstp z_i
 
 						inc i						;incrémentation de i
-			
+						
+						fld z_r						;formule z_r² + z_i²
+						fmul z_r
+						fld z_i
+						fmul z_i
+						fadd st(0), st(1)
+						fstp result1
+					
+						cmp result1, 4				;condtion tant que
+						jl fin_tantque
+						
 					fin_tantque:
 			
 					;si
@@ -363,24 +348,32 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 					fcomip st(0), st(1)
 					fstp result3
 					je sinon
-					invoke SetPixel,hdc,x,y,00FF000h	; affiche un point à la coordonnée (x,y) 
-													; de couleur FF00FF (BBVVRR) 
-													; où BB=niveau de bleu sur 2 octets
-													; où VV=niveau de vert sur 2 octets
-													; où RR=niveau de rouge sur 2 octets	
+					invoke SetPixel,hdc,x,y,00FF000h	; affiche un point à la coordonnée (x,y) 	
 			
 					sinon:
-						invoke SetPixel,hdc,x,y,0F000FFh	; affiche un point à la coordonnée (x,y) 
-													; de couleur FF00FF (BBVVRR) 
-													; où BB=niveau de bleu sur 2 octets
-													; où VV=niveau de vert sur 2 octets
-													; où RR=niveau de rouge sur 2 octets	
+						invoke SetPixel,hdc,x,y,0F000FFh	; affiche un point à la coordonnée (x,y) 	
 			
 					inc y
-		
+					
+					mov result1, 0
+					
+					fld image_y
+					fld y
+					fcomip st(0), st(1)
+					fstp result1
+					jl fin_pour_y
+					
 				fin_pour_y:
-		
+				
 				inc x
+				
+				mov result1, 0
+				
+				fld image_x
+				fld x
+				fcomip st(0), st(1)
+				fstp result1
+				jl fin_pour_x				
 						
 			fin_pour_x:
 				
