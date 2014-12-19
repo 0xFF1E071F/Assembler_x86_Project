@@ -51,16 +51,12 @@ includelib masm32.lib
 	ButtonClassName3 db 	"button",0					; classe de type button (bouton) 
 	ButtonText3 	db 		"Remise a zero",0
 	
-	EditClassName1 	db 		"edit",0					; classe de type edit (zone d'édition de texte) 
-	
 	val				dd 		1							; valeur avec laquelle on multipliera le contenu de l'EDIT
 	
+	EditClassName1 	db 		"edit",0					; classe de type edit (zone d'édition de texte) 
 	EditClassName2 	db 		"edit",0					; classe de type edit (zone d'édition de texte) 
-	
 	EditClassName3 	db 		"edit",0					; classe de type edit (zone d'édition de texte) 
-	
 	EditClassName4 	db 		"edit",0					; classe de type edit (zone d'édition de texte) 
-	
 	EditClassName5 	db 		"edit",0					; classe de type edit (zone d'édition de texte) 
 	
 .data? 
@@ -73,8 +69,6 @@ includelib masm32.lib
 	
 	x				REAL4 	?
 	y				REAL4 	?
-	
-
 	
 	result1			REAL4 	?
 	result2			REAL4 	?
@@ -264,7 +258,6 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 		mov hdc, eax								; BeginPaint retourne le handle du contexte où on dessine
 		
 			mov x, 0
-			mov y, 0
 				
 			;fld image_x									;initialisation d'image_x
 			;fadd x2
@@ -279,6 +272,8 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 			;fstp image_y
 						
 			pour_x:										;boucle for: tant que x< image_x par pas de 1
+				
+				mov y, 0
 											
 				pour_y:								;boucle for: tant que y<image_y par pas de 1
 					

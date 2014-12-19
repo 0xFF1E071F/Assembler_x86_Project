@@ -49,8 +49,6 @@ includelib masm32.lib
 	result5			REAL4 0
 
 .data? 
-	x	dd	?
-	y	dd	?
 	hInstance HINSTANCE ? 
 	CommandLine LPSTR ? 
 
