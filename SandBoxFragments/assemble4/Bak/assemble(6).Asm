@@ -218,12 +218,10 @@ create:
        			; si ax=BN_CLICKED
        			invoke GetWindowText,hwndEdit1,ADDR buffer,512	; récupération du contenu de l'EDIT dans buffer
         		invoke atol, addr buffer	; conversion du contenu du buffer en DWORD dans eax 
-       			mul val	; eax = eax * val
        			invoke GetWindowText,hwndEdit2,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
         		invoke atol, addr buffer2	; conversion du contenu du buffer en DWORD dans eax 
-       			mul val	; eax = eax * val
       			invoke dwtoa, eax, addr buffer ; conversion de eax en chaîne de caractères dans buffer
-      			invoke MessageBox,NULL,ADDR buffer,ADDR buffer2,ADDR AppName,MB_OK ; créaton d'une MessageBox avec buffer comme texte 
+      			invoke MessageBox,NULL,ADDR buffer,ADDR AppName,MB_OK ; créaton d'une MessageBox avec buffer comme texte 
     
    
     paint:

@@ -7,7 +7,7 @@ include \masm32\include\kernel32.inc
 include \masm32\include\masm32rt.inc 
 
 includelib \masm32\lib\kernel32.lib
-include \masm32\include\masm32rt.inc
+
 	
 	
 .data

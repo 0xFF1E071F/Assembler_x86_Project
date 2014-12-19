@@ -112,7 +112,7 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 			
 			mov x,0
 			mov y,0
-			boucle:
+			boucle:;travailler ici!!!!!!!!!!!
 				invoke SetPixel,hdc,x,y,0FF00FFh	; affiche un point à la coordonnée (x,y) 
 													; de couleur FF00FF (BBVVRR) 
 													; où BB=niveau de bleu sur 2 octets

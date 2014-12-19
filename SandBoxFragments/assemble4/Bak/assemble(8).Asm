@@ -65,7 +65,7 @@ hwndEdit4 HWND ?	; handle de l'EDIT
 hwndEdit5 HWND ?	; handle de l'EDIT
 
 buffer db 512 dup(?) 	; Buffer pour stocker le texte qu'on inscrit dans la boîte d'édition.
-
+buffer2 db 512 dup(?)
 
 .const 
 ButtonID equ 1         	; le n°ID du Control de type Button 
@@ -150,9 +150,9 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
 ;bouton 
 create:
-    	invoke CreateWindowEx,WS_EX_CLIENTEDGE, ADDR EditClassName1,ADDR Appxmi,\
+    	invoke CreateWindowEx,WS_EX_CLIENTEDGE, ADDR EditClassName1,\
     	 
-                        WS_CHILD or WS_VISIBLE or WS_BORDER or ES_CENTER or\ 
+                        ADDR Appxmi,WS_CHILD or WS_VISIBLE or WS_BORDER or ES_CENTER or\ 
                         ES_AUTOHSCROLL,\ 
                         100,475,50,25,hWnd,EditID,hInstance,NULL	; Création du contrôle EDIT 
         mov  hwndEdit1,eax 
@@ -218,6 +218,8 @@ create:
        			; si ax=BN_CLICKED
        			invoke GetWindowText,hwndEdit1,ADDR buffer,512	; récupération du contenu de l'EDIT dans buffer
         		invoke atol, addr buffer	; conversion du contenu du buffer en DWORD dans eax 
+       			invoke GetWindowText,hwndEdit2,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer2	; conversion du contenu du buffer en DWORD dans eax 
        			mul val	; eax = eax * val
       			invoke dwtoa, eax, addr buffer ; conversion de eax en chaîne de caractères dans buffer
       			invoke MessageBox,NULL,ADDR buffer,ADDR AppName,MB_OK ; créaton d'une MessageBox avec buffer comme texte 

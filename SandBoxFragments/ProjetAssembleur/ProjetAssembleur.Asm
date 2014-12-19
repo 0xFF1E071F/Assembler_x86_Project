@@ -298,12 +298,6 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 						mov result1, 0				;initialisation de variables nécessaires aux calculs des formules
 						mov result2, 0
 						mov result3, 0
-						
-						fld i
-						fild iteration_max
-						fcomip st(0), st(1)
-						fstp result2	
-						jl fin_tantque
 				
 						fld tmp						;initialisation de tmp
 						fadd z_r
@@ -333,7 +327,13 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 						fstp result1
 					
 						cmp result1, 4				;condtion tant que
-						jl fin_tantque
+						jl tantque
+						
+						fld i
+						fild iteration_max
+						fcomip st(0), st(1)
+						fstp result2	
+						jl tantque
 						
 					fin_tantque:
 			
@@ -356,7 +356,7 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 					fld y
 					fcomip st(0), st(1)
 					fstp result1
-					jl fin_pour_y
+					jl pour_y
 					
 				fin_pour_y:
 				
@@ -368,7 +368,7 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 				fld x
 				fcomip st(0), st(1)
 				fstp result1
-				jl fin_pour_x				
+				jl pour_x				
 						
 			fin_pour_x:
 				
