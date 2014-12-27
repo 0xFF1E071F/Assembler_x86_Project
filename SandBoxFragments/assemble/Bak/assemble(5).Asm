@@ -22,6 +22,9 @@ start:
     call GetModuleHandle 
     push offset consoleTitle
     call SetConsoleTitle 
+    
+    push 100000
+    call Sleep 
     inkey "press a key to continue..."
     push 0 
     call ExitProcess 

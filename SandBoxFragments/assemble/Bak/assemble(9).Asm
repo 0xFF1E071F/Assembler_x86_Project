@@ -18,11 +18,11 @@ consoleTitle db "Assembleur",0
 
 .code 
 start: 
-    push 0 
+    push offset exeName
     call GetModuleHandle 
     push offset consoleTitle
-    call SetConsoleTextAttribute 
-    INVOKE  SetConsoleTitle,offset consoleTitle
+    call SetConsoleTitle 
+    inkey "press a key to continue..."
     push 0 
     call ExitProcess 
 end start 

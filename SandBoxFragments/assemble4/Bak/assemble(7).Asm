@@ -65,7 +65,7 @@ hwndEdit4 HWND ?	; handle de l'EDIT
 hwndEdit5 HWND ?	; handle de l'EDIT
 
 buffer db 512 dup(?) 	; Buffer pour stocker le texte qu'on inscrit dans la boîte d'édition.
-
+buffer2 db 512 dup(?)
 
 .const 
 ButtonID equ 1         	; le n°ID du Control de type Button 
@@ -218,8 +218,9 @@ create:
        			; si ax=BN_CLICKED
        			invoke GetWindowText,hwndEdit1,ADDR buffer,512	; récupération du contenu de l'EDIT dans buffer
         		invoke atol, addr buffer	; conversion du contenu du buffer en DWORD dans eax 
-       			mul val	; eax = eax * val
-      			invoke dwtoa, eax, addr buffer ; conversion de eax en chaîne de caractères dans buffer
+       			invoke GetWindowText,hwndEdit2,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer2	; conversion du contenu du buffer en DWORD dans eax 
+      			invoke dwtoa, eax, addr buffer,addr buffer2 ; conversion de eax en chaîne de caractères dans buffer
       			invoke MessageBox,NULL,ADDR buffer,ADDR AppName,MB_OK ; créaton d'une MessageBox avec buffer comme texte 
     
    

@@ -296,6 +296,7 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 						mov result1, 0				;initialisation de variables nécessaires aux calculs des formules
 						mov result2, 0
 						mov result3, 0
+<<<<<<< HEAD
 						
 						fld z_r						;formule z_r² + z_i²
 						fmul z_r
@@ -312,6 +313,9 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 						fstp result2	
 						jge fin_tantque
 						
+=======
+				
+>>>>>>> origin/master
 						fld tmp						;initialisation de tmp
 						fadd z_r
 						fstp tmp
@@ -332,7 +336,18 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 
 						inc i						;incrémentation de i
 					
+<<<<<<< HEAD
 						jmp tantque
+=======
+						cmp result1, 4				;condtion tant que
+						jl tantque
+						
+						fld i
+						fild iteration_max
+						fcomip st(0), st(1)
+						fstp result2	
+						jl tantque
+>>>>>>> origin/master
 						
 					fin_tantque:
 			
@@ -355,8 +370,12 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 					fld y
 					fcomip st(0), st(1)
 					fstp result1
+<<<<<<< HEAD
 					jge fin_pour_y
 					jmp pour_y
+=======
+					jl pour_y
+>>>>>>> origin/master
 					
 				fin_pour_y:
 				
@@ -368,8 +387,12 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 				fld x
 				fcomip st(0), st(1)
 				fstp result1
+<<<<<<< HEAD
 				jge fin_pour_x				
 				jmp pour_x
+=======
+				jl pour_x				
+>>>>>>> origin/master
 						
 			fin_pour_x:
 				

@@ -74,6 +74,11 @@ buffer5 db 512 dup(?)
 ButtonID equ 1         	; le n°ID du Control de type Button 
 EditID equ 2           	; le n°ID du Control de type 'Zone d'édition' (de saisie de texte) 
 
+ButtonID2 equ 1         	; le n°ID du Control de type Button 
+
+
+ButtonID3 equ 1         	; le n°ID du Control de type Button 
+
 .code 
 start: 
     invoke GetModuleHandle, NULL 
@@ -196,11 +201,11 @@ create:
         mov  hwndButton,eax
         invoke CreateWindowEx,NULL, ADDR ButtonClassName2,ADDR ButtonText2,\ 
                         WS_CHILD or WS_VISIBLE or BS_DEFPUSHBUTTON,\ 
-                        220,500,140,25,hWnd,ButtonID,hInstance,NULL	; Création du contrôle BUTTON 
+                        220,500,140,25,hWnd,ButtonID2,hInstance,NULL	; Création du contrôle BUTTON 
         mov  hwndButton,eax
         invoke CreateWindowEx,NULL, ADDR ButtonClassName3,ADDR ButtonText3,\ 
                         WS_CHILD or WS_VISIBLE or BS_DEFPUSHBUTTON,\ 
-                        365,500,140,25,hWnd,ButtonID,hInstance,NULL	; Création du contrôle BUTTON 
+                        365,500,140,25,hWnd,ButtonID3,hInstance,NULL	; Création du contrôle BUTTON 
         mov  hwndButton,eax
    	jmp fin_messages
    	
@@ -236,16 +241,16 @@ create:
     	   	invoke BeginPaint, hWnd, ADDR ps	; lance le dessin de la fenêtre
 			mov hdc, eax	; BeginPaint retourne le handle du contexte où on dessine
 			
-			mov x,0
-			mov y,0
+			
 			boucle:;travailler ici!!!!!!!!!!!
+			inc x
+				inc y
 				invoke SetPixel,hdc,x,y,0FF00FFh	; affiche un point à la coordonnée (x,y) 
 													; de couleur FF00FF (BBVVRR) 
 													; où BB=niveau de bleu sur 2 octets
 													; où VV=niveau de vert sur 2 octets
 													; où RR=niveau de rouge sur 2 octets
-				inc x
-				inc y
+				
 				cmp x,450
 				jne boucle
 				

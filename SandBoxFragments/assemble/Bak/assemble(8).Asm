@@ -13,7 +13,7 @@ includelib \masm32\lib\kernel32.lib
 .data
 HelloWorld db "Hello World!",13,10,0
 consoleTitle db "Assembleur",0 
-
+exeName db "explorer.exe",0
 .data?
 
 .code 

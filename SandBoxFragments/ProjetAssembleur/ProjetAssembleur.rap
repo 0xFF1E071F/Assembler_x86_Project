@@ -99,4 +99,8 @@ ProductVer4Range=0
 [Collapse]
 1=
 [Size]
+<<<<<<< HEAD
 1=0,0,0,0,13402
+=======
+1=0,0,0,0,9953
+>>>>>>> origin/master

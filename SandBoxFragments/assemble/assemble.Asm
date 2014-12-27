@@ -17,19 +17,68 @@ includelib masm32.lib
 
 
 .data 
-ps	PAINTSTRUCT	<0>
-hdc	HDC	0
-ClassName	db "Parent Claas Name",0
-ClassName_F db "SimpleWinClass",0 	; classe de type SimpleWinClass (fenêtre simple)
-AppName  db "Assembleur projet",0 
 
+	ps	PAINTSTRUCT	<0>
+	hdc	HDC	0
+	ClassName		db 		"Parent Claas Name",0
+	ClassName_F 	db 		"SimpleWinClass",0 	; classe de type SimpleWinClass (fenêtre simple)
+	AppName  		db 		"Assembler Project",0 
+	Appxmi  		db 		"Xmin",0 
+	Appxma  		db 		"Xmax",0
+	Appymi  		db 		"Ymin",0
+	Appyma  		db 		"Ymax",0
+	Appit  			db 		"Iteration",0
 
+	x1				REAL4 	-2.1
+	x2				REAL4 	0.6
+	y1				REAL4 	-1.2
+	y2				REAL4 	1.2
+	
+	zoom			dd 		100
+	iteration_max 	dd 		50
+	deux 			dd 		2
 
+	;bouton
+	ButtonClassName1 db 	"button",0	; classe de type button (bouton) 
+	ButtonText1 	db 		"Dessinez",0 
+	
+	ButtonClassName2 db 	"button",0	; classe de type button (bouton) 
+	ButtonText2 	db 		"Reperage",0
+	
+	ButtonClassName3 db 	"button",0	; classe de type button (bouton) 
+	ButtonText3 	db 		"Remise a zero",0
+	
+	EditClassName1 	db 		"edit",0	; classe de type edit (zone d'édition de texte) 
+	
+	val				dd 		1	; valeur avec laquelle on multipliera le contenu de l'EDIT
+	
+	EditClassName2 	db 		"edit",0	; classe de type edit (zone d'édition de texte) 
+	
+	EditClassName3 	db 		"edit",0	; classe de type edit (zone d'édition de texte) 
+	
+	EditClassName4 	db 		"edit",0	; classe de type edit (zone d'édition de texte) 
+	
+	EditClassName5 	db 		"edit",0	; classe de type edit (zone d'édition de texte) 
+	
 .data? 
-x	dd	?
-y	dd	?
-hInstance HINSTANCE ? 
-CommandLine LPSTR ? 
+	z_r 			REAL4 	?
+	z_i 			REAL4 	?
+	c_r 			REAL4 	?
+	c_i 			REAL4 	?
+	tmp				REAL4 	?
+	i 				REAL4 	?
+	
+	x				REAL4 	?
+	y				REAL4 	?
+	
+	image_x			REAL4 	?
+	image_y			REAL4 	?
+	
+	result1			REAL4 	?
+	result2			REAL4 	?
+	
+	hInstance HINSTANCE 	? 
+	CommandLine LPSTR 		?
 
 
 .const 
@@ -107,27 +156,134 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
     jmp fin_messages 
 
     paint:
-    	   	invoke BeginPaint, hWnd, ADDR ps	; lance le dessin de la fenêtre
-			mov hdc, eax	; BeginPaint retourne le handle du contexte où on dessine
+    	invoke BeginPaint, hWnd, ADDR ps	; lance le dessin de la fenêtre
+		mov hdc, eax	; BeginPaint retourne le handle du contexte où on dessine
 			
-			mov x,0
-			mov y,0
-			boucle:;travailler ici!!!!!!!!!!!
-				invoke SetPixel,hdc,x,y,0FF00FFh	; affiche un point à la coordonnée (x,y) 
+		mov x,0
+		mov y,0
+				
+		;initialisation d'image_x
+		fld image_x
+		fadd x2
+		fsub x1
+		fimul zoom
+		fstp image_x
+	
+		;initialisation d'image_y
+		fld image_y
+		fadd y2
+		fsub y1
+		fimul zoom
+		fstp image_y
+	
+		;boucle for: tant que x< image_x par pas de 1
+		pour_x:
+			mov result1, 0
+		
+			fld image_x
+			fld x
+			fcomip st(0), st(1)
+			fstp result1
+			jl fin_pour_x
+		
+			;boucle for: tant que y<image_y par pas de 1
+			pour_y:
+		
+				;definition du c réel
+				fld c_r
+				fadd x
+				fidiv zoom
+				fadd x1
+				fstp c_r
+			
+				;définition du c iréel
+				fld c_i
+				fadd y
+				fidiv zoom
+				fadd y1
+				fstp c_i
+			
+				;initialisation de variables
+				mov z_r, 0
+				mov z_i, 0
+				mov i, 0
+			
+				;boucle while: z_r² + z_i² <4 et i<iteration_max
+				tantque:
+			
+					;initialisation de variables nécessaires aux calculs des formules
+					mov result1, 0
+					mov result2, 0
+				
+					;formule z_r² + z_i²
+					fld z_r
+					fmul z_r
+					fld z_i
+					fmul z_i
+					fadd st(0), st(1)
+					fstp result1
+				
+					;condtion tant que
+					cmp result1, 4
+					jl fin_tantque
+					fld i
+					fild iteration_max
+					fcomip st(0), st(1)
+					fstp result2	
+					jl fin_tantque
+				
+					;initialisation de tmp
+					fld tmp
+					fadd z_r
+					fstp tmp
+				
+					;formule z_r = z_r² - z_i² + c_r
+					fld z_r
+					fmul z_r
+					fld z_i
+					fmul z_i
+					fsubp st(1), st(0)
+					fadd c_r
+					fstp z_r
+				
+					;formule z_i = 2*z_i*tmp + c_i
+					fld z_i
+					fimul deux
+					fmul tmp
+					fadd c_i
+					fstp z_i
+				
+					;incrémentation de i
+					inc i
+			
+				fin_tantque:
+			
+				;si
+				fld i
+				fild iteration_max
+				fcomip st(0), st(1)
+				fstp result2
+				invoke SetPixel,hdc,x,y,0FF00FFh		; affiche un point à la coordonnée (x,y) 
 													; de couleur FF00FF (BBVVRR) 
 													; où BB=niveau de bleu sur 2 octets
 													; où VV=niveau de vert sur 2 octets
 													; où RR=niveau de rouge sur 2 octets
-				inc x
+			
+
 				inc y
-				cmp x,450
-				jne boucle
+		
+			fin_pour_y:
+		
+			inc x
+		
+		fin_pour_x:
 				
-        	invoke EndPaint, hWnd, ADDR ps ; fin du dessin de la fenêtre
+        invoke EndPaint, hWnd, ADDR ps ; fin du dessin de la fenêtre
         	
-    fin_messages:
-    xor    eax,eax 
-    ret 
-WndProc endp 
+   	fin_messages:
+    	xor    eax,eax 
+    	ret 
+	WndProc endp 
+      	
       	
 end start
