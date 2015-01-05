@@ -29,17 +29,18 @@ includelib masm32.lib
 	Appyma  		db 		"Ymax",0
 	Appit  			db 		"Iteration",0
 
-	x1				REAL4 	-2.1
-	x2				REAL4 	0.6
-	y1				REAL4 	-1.2
-	y2				REAL4 	1.2
+	x1				REAL8 	-2.1
+	x2				REAL8 	0.6
+	y1				REAL8 	-1.2
+	y2				REAL8 	1.2
 	
-	image_x			REAL4 	270.0
-	image_y			REAL4 	240.0
+	image_x			REAL8	270.0
+	image_y			REAL8 	240.0
 	
 	zoom			dd 		100
 	iteration_max 	dd 		50
 	deux 			dd 		2
+	quatre			dd		4
 
 	;bouton
 	ButtonClassName1 db 	"button",0					; classe de type button (bouton) 
@@ -60,19 +61,21 @@ includelib masm32.lib
 	EditClassName5 	db 		"edit",0					; classe de type edit (zone d'édition de texte) 
 	
 .data? 
-	z_r 			REAL4 	?
-	z_i 			REAL4 	?
-	c_r 			REAL4 	?
-	c_i 			REAL4 	?
-	tmp				REAL4 	?
-	i 				REAL4 	?
+	z_r 			REAL8 	?
+	z_i 			REAL8 	?
+	c_r 			REAL8 	?
+	c_i 			REAL8 	?
+	tmp				REAL8 	?
 	
+	i 				dd	 	?
 	x				dd 		?
 	y				dd 		?
 	
-	result1			REAL4 	?
-	result2			REAL4 	?
-	result3			REAL4 	?
+	result1			REAL8 	?
+	result2			REAL8 	?
+	result3			REAL8 	?
+	result4			REAL8 	?
+	result5			REAL8 	?
 	
 	hInstance HINSTANCE 	? 
 	CommandLine LPSTR 		? 
@@ -254,77 +257,58 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
     paint:
     	invoke BeginPaint, hWnd, ADDR ps			; lance le dessin de la fenêtre
 		mov hdc, eax								; BeginPaint retourne le handle du contexte où on dessine
-		
+				
+			fld image_x									;initialisation d'image_x
+			fadd x2
+			fsub x1
+			fimul zoom
+			fstp image_x
+	
+			fld image_y									;initialisation d'image_y
+			fadd y2
+			fsub y1
+			fimul zoom
+			fstp image_y
+			
 			mov x, 0
-	
-			;fld image_x									;initialisation d'image_x
-			;fadd x2
-			;fsub x1
-			;fimul zoom
-			;fstp image_x
-	
-			;fld image_y									;initialisation d'image_y
-			;fadd y2
-			;fsub y1
-			;fimul zoom
-			;fstp image_y
 						
-			pour_x:									;boucle for: tant que x< image_x par pas de 1
+			pour_x:										;boucle for: tant que x< image_x par pas de 1
 				
 				mov y, 0
-				
+											
 				pour_y:								;boucle for: tant que y<image_y par pas de 1
 					
-					fld c_r							;definition du c réel
-					fadd x
+					fild x							;definition du c réel
 					fidiv zoom
 					fadd x1
 					fstp c_r
-				
-					fld c_i							;définition du c iréel
-					fadd y
+						
+					fild y							;définition du c iréel
 					fidiv zoom
 					fadd y1
 					fstp c_i
 			
-					mov z_r, 0						;initialisation de variables
-					mov z_i, 0
+					fldz							;initialisation de variables
+					fst z_r
+					fstp z_i
 					mov i, 0
 			
 					tantque:						;boucle while: z_r² + z_i² <4 et i<iteration_max
 			
-						mov result1, 0				;initialisation de variables nécessaires aux calculs des formules
-						mov result2, 0
-						mov result3, 0
-<<<<<<< HEAD
-						
-						fld z_r						;formule z_r² + z_i²
-						fmul z_r
-						fld z_i
-						fmul z_i
-						fadd st(0), st(1)
-						fstp result1
-						cmp result1, 4				;condtion tant que
-						jge fin_tantque
-						
-						fld i
-						fild iteration_max
-						fcomip st(0), st(1)
-						fstp result2	
-						jge fin_tantque
-						
-=======
+						fldz						;initialisation de variables nécessaires aux calculs des formules
+						fst result1
+						fst result2
+						fst result3
+						fstp result4
 				
->>>>>>> origin/master
-						fld tmp						;initialisation de tmp
-						fadd z_r
+						fld z_r						;initialisation de tmp
 						fstp tmp
 				
-						fld z_r						;formule z_r = z_r² - z_i² + c_r
-						fmul z_r
-						fld z_i
+						fld z_i						;formule z_r = z_r² - z_i² + c_r
 						fmul z_i
-						fsubp st(1), st(0)
+						fld z_r						
+						fmul z_r
+						fsubrp st(1), st(0)
 						fadd c_r
 						fstp z_r
 					
@@ -335,67 +319,58 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 						fstp z_i
 
 						inc i						;incrémentation de i
-					
-<<<<<<< HEAD
-						jmp tantque
-=======
-						cmp result1, 4				;condtion tant que
-						jl tantque
 						
-						fld i
+						fld z_i						;formule z_r² + z_i²
+						fmul z_i
+						fld z_r						
+						fmul z_r
+						fadd st(1), st(0)
+						fstp result1
+						fstp result1
+												
+						fild quatre					;condtion tant que
+						fld result1	
+						fcomip st(0), st(1)
+						fstp result3
+						jae fin_tantque
+						
+						fild i
 						fild iteration_max
 						fcomip st(0), st(1)
 						fstp result2	
-						jl tantque
->>>>>>> origin/master
+						jb tantque
 						
 					fin_tantque:
 			
 					;si
-					fld i
+					fild i
 					fild iteration_max
 					fcomip st(0), st(1)
-					fstp result3
+					fstp result4
 					je sinon
-					invoke SetPixel,hdc,x,y,00FF000h	; affiche un point à la coordonnée (x,y) 	
-			
+						invoke SetPixel,hdc,x,y,00FF00h	; affiche un point à la coordonnée (x,y) 	
+						jmp suite_si
+						
 					sinon:
-						invoke SetPixel,hdc,x,y,0F000FFh	; affiche un point à la coordonnée (x,y) 	
-			
+						invoke SetPixel,hdc,x,y,000000h	; affiche un point à la coordonnée (x,y) 	
+				
+					suite_si:
 					inc y
 					
-					mov result1, 0
-					
 					fld image_y
-					fld y
+					fild y
 					fcomip st(0), st(1)
 					fstp result1
-<<<<<<< HEAD
-					jge fin_pour_y
-					jmp pour_y
-=======
-					jl pour_y
->>>>>>> origin/master
-					
-				fin_pour_y:
+					jb pour_y
 				
 				inc x
 				
-				mov result1, 0
-				
 				fld image_x
-				fld x
+				fild x
 				fcomip st(0), st(1)
 				fstp result1
-<<<<<<< HEAD
-				jge fin_pour_x				
-				jmp pour_x
-=======
-				jl pour_x				
->>>>>>> origin/master
-						
-			fin_pour_x:
-				
+				jb pour_x				
+	
         invoke EndPaint, hWnd, ADDR ps ; fin du dessin de la fenêtre
         	
    	fin_messages:

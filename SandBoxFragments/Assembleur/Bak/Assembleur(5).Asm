@@ -25,7 +25,6 @@ includelib masm32.lib
 	zoom			dd 		100
 	iteration_max 	dd 		50
 	deux 			dd 		2
-	quatre			dd		4
 	
 .data? 
 	z_r 			REAL8 	?
@@ -80,17 +79,15 @@ start:
 					fadd y1
 					fstp c_i
 			
-					fldz							;initialisation de variables
-					fst z_r
-					fstp z_i
+					mov z_r, 0						;initialisation de variables
+					mov z_i, 0
 					mov i, 0
 			
 					tantque:						;boucle while: z_r² + z_i² <4 et i<iteration_max
 			
-						fldz						;initialisation de variables nécessaires aux calculs des formules
-						fst result1
-						fst result2
-						fstp result3
+						mov result1, 0				;initialisation de variables nécessaires aux calculs des formules
+						mov result2, 0
+						mov result3, 0
 						
 						fld i
 						fild iteration_max
@@ -124,11 +121,8 @@ start:
 						fmul z_i
 						fadd st(0), st(1)
 						fstp result1
-								
-						fdl result1					;condtion tant que
-						fld quatre
-						fcomip st(0), st(1)
-						fst result3
+					
+						cmp result1, 4				;condtion tant que
 						jl fin_tantque
 						
 					fin_tantque:

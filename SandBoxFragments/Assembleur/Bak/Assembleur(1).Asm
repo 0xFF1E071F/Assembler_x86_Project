@@ -14,41 +14,41 @@ include masm32.inc
 includelib masm32.lib
 
 .data 
-	x1				REAL4 	-2.1
-	x2				REAL4 	0.6
-	y1				REAL4 	-1.2
-	y2				REAL4 	1.2
+	x1				REAL8 	-2.1
+	x2				REAL8 	0.6
+	y1				REAL8 	-1.2
+	y2				REAL8 	1.2
 	
-	image_x			dd	 	240
-	image_y			dd	 	270
+	image_x			dd	 	270
+	image_y			dd	 	240
 	
 	zoom			dd 		100
 	iteration_max 	dd 		50
 	deux 			dd 		2
+	quatre			dd		4
 	
 .data? 
-	z_r 			REAL4 	?
-	z_i 			REAL4 	?
-	c_r 			REAL4 	?
-	c_i 			REAL4 	?
-	tmp				REAL4 	?
-	i 				REAL4 	?
+	z_r 			REAL8 	?
+	z_i 			REAL8 	?
+	c_r 			REAL8 	?
+	c_i 			REAL8 	?
+	tmp				REAL8 	?
 	
-	x				REAL4 	?
-	y				REAL4 	?
+	i 				dd	 	?
+	x				dd 		?
+	y				dd 		?
 	
-	result1			REAL4 	?
-	result2			REAL4 	?
-	result3			REAL4 	?
-	result4			REAL4 	?
-	result5			REAL4 	?
+	result1			REAL8 	?
+	result2			REAL8 	?
+	result3			REAL8 	?
+	result4			REAL8 	?
+	result5			REAL8 	?
 	
 .code 
 
 start: 
 	
 	mov x, 0
-			mov y, 0
 				
 			;fld image_x									;initialisation d'image_x
 			;fadd x2
@@ -63,6 +63,8 @@ start:
 			;fstp image_y
 						
 			pour_x:										;boucle for: tant que x< image_x par pas de 1
+				
+				mov y, 0
 											
 				pour_y:								;boucle for: tant que y<image_y par pas de 1
 					
@@ -78,15 +80,18 @@ start:
 					fadd y1
 					fstp c_i
 			
-					mov z_r, 0						;initialisation de variables
-					mov z_i, 0
+					fldz							;initialisation de variables
+					fst z_r
+					fstp z_i
 					mov i, 0
 			
 					tantque:						;boucle while: z_r² + z_i² <4 et i<iteration_max
 			
-						mov result1, 0				;initialisation de variables nécessaires aux calculs des formules
-						mov result2, 0
-						mov result3, 0
+						fldz						;initialisation de variables nécessaires aux calculs des formules
+						fst result1
+						fst result2
+						fst result3
+						fstp result4
 						
 						fld i
 						fild iteration_max
@@ -120,8 +125,11 @@ start:
 						fmul z_i
 						fadd st(0), st(1)
 						fstp result1
-					
-						cmp result1, 4				;condtion tant que
+								
+						fld result1					;condtion tant que
+						fld quatre
+						fcomip st(0), st(1)
+						fstp result3
 						jl fin_tantque
 						
 					fin_tantque:
@@ -130,7 +138,7 @@ start:
 					fld i
 					fild iteration_max
 					fcomip st(0), st(1)
-					fstp result3
+					fstp result4
 					je sinon
 					;invoke SetPixel,hdc,x,y,00FF000h	; affiche un point à la coordonnée (x,y) 	
 			
@@ -139,7 +147,8 @@ start:
 			
 					inc y
 					
-					mov result1, 0
+					fldz
+					fstp result1
 					
 					fld image_y
 					fld y
@@ -151,7 +160,8 @@ start:
 				
 				inc x
 				
-				mov result1, 0
+				fldz
+				fstp result1
 				
 				fld image_x
 				fld x

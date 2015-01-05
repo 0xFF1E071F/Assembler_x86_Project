@@ -51,7 +51,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=19
+MilestoneOnDateDate=5
 MilestoneOnDateTimeYear=2014
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=19
@@ -86,7 +86,7 @@ ProductVer4Range=0
 [Collapse]
 1=
 [Size]
-1=0,0,0,0,1666
+1=0,0,0,0,347
 [BookMark]
 0=
 1=

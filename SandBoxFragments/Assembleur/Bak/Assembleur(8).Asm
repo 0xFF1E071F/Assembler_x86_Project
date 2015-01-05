@@ -14,10 +14,10 @@ include masm32.inc
 includelib masm32.lib
 
 .data 
-	x1				REAL8 	-2.1
-	x2				REAL8 	0.6
-	y1				REAL8 	-1.2
-	y2				REAL8 	1.2
+	x1				REAL4 	-2.1
+	x2				REAL4 	0.6
+	y1				REAL4 	-1.2
+	y2				REAL4 	1.2
 	
 	image_x			dd	 	270
 	image_y			dd	 	240
@@ -25,30 +25,30 @@ includelib masm32.lib
 	zoom			dd 		100
 	iteration_max 	dd 		50
 	deux 			dd 		2
-	quatre			dd		4
 	
 .data? 
-	z_r 			REAL8 	?
-	z_i 			REAL8 	?
-	c_r 			REAL8 	?
-	c_i 			REAL8 	?
-	tmp				REAL8 	?
+	z_r 			REAL4 	?
+	z_i 			REAL4 	?
+	c_r 			REAL4 	?
+	c_i 			REAL4 	?
+	tmp				REAL4 	?
+	i 				REAL4 	?
 	
-	i 				dd	 	?
-	x				dd 		?
-	y				dd 		?
+	x				REAL4 	?
+	y				REAL4 	?
 	
-	result1			REAL8 	?
-	result2			REAL8 	?
-	result3			REAL8 	?
-	result4			REAL8 	?
-	result5			REAL8 	?
+	result1			REAL4 	?
+	result2			REAL4 	?
+	result3			REAL4 	?
+	result4			REAL4 	?
+	result5			REAL4 	?
 	
 .code 
 
 start: 
 	
 	mov x, 0
+	mov y, 0
 				
 			;fld image_x									;initialisation d'image_x
 			;fadd x2
@@ -80,17 +80,15 @@ start:
 					fadd y1
 					fstp c_i
 			
-					fldz							;initialisation de variables
-					fst z_r
-					fstp z_i
+					mov z_r, 0						;initialisation de variables
+					mov z_i, 0
 					mov i, 0
 			
 					tantque:						;boucle while: z_r² + z_i² <4 et i<iteration_max
 			
-						fldz						;initialisation de variables nécessaires aux calculs des formules
-						fst result1
-						fst result2
-						fstp result3
+						mov result1, 0				;initialisation de variables nécessaires aux calculs des formules
+						mov result2, 0
+						mov result3, 0
 						
 						fld i
 						fild iteration_max
@@ -124,11 +122,8 @@ start:
 						fmul z_i
 						fadd st(0), st(1)
 						fstp result1
-								
-						fdl result1					;condtion tant que
-						fld quatre
-						fcomip st(0), st(1)
-						fst result3
+					
+						cmp result1, 4				;condtion tant que
 						jl fin_tantque
 						
 					fin_tantque:

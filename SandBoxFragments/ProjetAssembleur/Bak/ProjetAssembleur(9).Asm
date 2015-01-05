@@ -278,12 +278,14 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 											
 				pour_y:								;boucle for: tant que y<image_y par pas de 1
 					
-					fild x							;definition du c réel
+					fld c_r							;definition du c réel
+					fiadd x
 					fidiv zoom
 					fadd x1
 					fstp c_r
-						
-					fild y							;définition du c iréel
+				
+					fld c_i							;définition du c iréel
+					fiadd y
 					fidiv zoom
 					fadd y1
 					fstp c_i
@@ -301,7 +303,7 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 						fst result3
 						fstp result4
 						
-						fild i
+						fld i
 						fild iteration_max
 						fcomip st(0), st(1)
 						fstp result2	
@@ -343,28 +345,28 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 					fin_tantque:
 			
 					;si
-					fild i
+					fld i
 					fild iteration_max
 					fcomip st(0), st(1)
 					fstp result4
 					je sinon
-						invoke SetPixel,hdc,x,y,00FF000h	; affiche un point à la coordonnée (x,y) 	
-						jmp suite_si
-						
+					invoke SetPixel,hdc,x,y,00FF000h	; affiche un point à la coordonnée (x,y) 	
+			
 					sinon:
 						invoke SetPixel,hdc,x,y,0F000FFh	; affiche un point à la coordonnée (x,y) 	
-				
-					suite_si:
+			
 					inc y
 					
 					fldz
 					fstp result1
 					
 					fld image_y
-					fild y
+					fld y
 					fcomip st(0), st(1)
 					fstp result1
-					jl pour_y
+					jl fin_pour_y
+					
+				fin_pour_y:
 				
 				inc x
 				
@@ -372,11 +374,14 @@ WndProc proc hWnd:HWND, uMsg:UINT, wParam:WPARAM, lParam:LPARAM
 				fstp result1
 				
 				fld image_x
-				fild x
+				fld x
 				fcomip st(0), st(1)
 				fstp result1
-				jl pour_x				
+				jl fin_pour_x				
+						
+			fin_pour_x:
 	
+				
         invoke EndPaint, hWnd, ADDR ps ; fin du dessin de la fenêtre
         	
    	fin_messages:
