@@ -66,10 +66,18 @@ hwndEdit5 HWND ?	; handle de l'EDIT
 
 buffer db 512 dup(?) 	; Buffer pour stocker le texte qu'on inscrit dans la boîte d'édition.
 buffer2 db 512 dup(?)
+buffer3 db 512 dup(?)
+buffer4 db 512 dup(?)
+buffer5 db 512 dup(?)
 
 .const 
 ButtonID equ 1         	; le n°ID du Control de type Button 
 EditID equ 2           	; le n°ID du Control de type 'Zone d'édition' (de saisie de texte) 
+
+ButtonID2 equ 1         	; le n°ID du Control de type Button 
+
+
+ButtonID3 equ 1         	; le n°ID du Control de type Button 
 
 .code 
 start: 
@@ -193,11 +201,11 @@ create:
         mov  hwndButton,eax
         invoke CreateWindowEx,NULL, ADDR ButtonClassName2,ADDR ButtonText2,\ 
                         WS_CHILD or WS_VISIBLE or BS_DEFPUSHBUTTON,\ 
-                        220,500,140,25,hWnd,ButtonID,hInstance,NULL	; Création du contrôle BUTTON 
+                        220,500,140,25,hWnd,ButtonID2,hInstance,NULL	; Création du contrôle BUTTON 
         mov  hwndButton,eax
         invoke CreateWindowEx,NULL, ADDR ButtonClassName3,ADDR ButtonText3,\ 
                         WS_CHILD or WS_VISIBLE or BS_DEFPUSHBUTTON,\ 
-                        365,500,140,25,hWnd,ButtonID,hInstance,NULL	; Création du contrôle BUTTON 
+                        365,500,140,25,hWnd,ButtonID3,hInstance,NULL	; Création du contrôle BUTTON 
         mov  hwndButton,eax
    	jmp fin_messages
    	
@@ -220,9 +228,13 @@ create:
         		invoke atol, addr buffer	; conversion du contenu du buffer en DWORD dans eax 
        			invoke GetWindowText,hwndEdit2,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
         		invoke atol, addr buffer2	; conversion du contenu du buffer en DWORD dans eax 
-       			mul val	; eax = eax * val
-      			invoke dwtoa, eax, addr buffer ; conversion de eax en chaîne de caractères dans buffer
-      			invoke MessageBox,NULL,ADDR buffer,ADDR AppName,MB_OK ; créaton d'une MessageBox avec buffer comme texte 
+      			invoke GetWindowText,hwndEdit3,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer3	; conversion du contenu du buffer en DWORD dans eax 
+        		invoke GetWindowText,hwndEdit4,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer4	; conversion du contenu du buffer en DWORD dans eax 
+        		invoke GetWindowText,hwndEdit5,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer5	; conversion du contenu du buffer en DWORD dans eax 
+      			
     
    
     paint:

@@ -17,6 +17,15 @@ includelib masm32.lib
 
 
 .data 
+
+x1 real4 -2.5
+x2 real4 2.5
+y1 real4 -1.2
+y2 real4 1.2
+plus dd 1
+deux dd 2
+quatre dd 4
+
 ps	PAINTSTRUCT	<0>
 hdc	HDC	0
 ClassName	db "Parent Claas Name",0
@@ -54,6 +63,20 @@ EditClassName5 db "edit",0	; classe de type edit (zone d'édition de texte)
 .data? 
 x	dd	?
 y	dd	?
+image_x	real4 ?
+image_y  real4 ?
+c_r real4 ?
+c_i real4 ?
+z_r real4 ?
+z_i real4 ?
+i dd ?
+tmp real4 ?
+compa dd ?
+depile dd ?
+r2 real4 ?
+i2 real4 ?
+zoom dd ?
+iteration_max dd ?
 hInstance HINSTANCE ? 
 CommandLine LPSTR ? 
 ;bouton
@@ -66,10 +89,18 @@ hwndEdit5 HWND ?	; handle de l'EDIT
 
 buffer db 512 dup(?) 	; Buffer pour stocker le texte qu'on inscrit dans la boîte d'édition.
 buffer2 db 512 dup(?)
+buffer3 db 512 dup(?)
+buffer4 db 512 dup(?)
+buffer5 db 512 dup(?)
 
 .const 
 ButtonID equ 1         	; le n°ID du Control de type Button 
 EditID equ 2           	; le n°ID du Control de type 'Zone d'édition' (de saisie de texte) 
+
+ButtonID2 equ 1         	; le n°ID du Control de type Button 
+
+
+ButtonID3 equ 1         	; le n°ID du Control de type Button 
 
 .code 
 start: 
@@ -110,7 +141,7 @@ WinMain proc hInst:HINSTANCE,hPrevInst:HINSTANCE,CmdLine:LPSTR,CmdShow:DWORD
     invoke CreateWindowEx,WS_EX_CLIENTEDGE,ADDR ClassName, \ 
                         ADDR AppName, WS_OVERLAPPEDWINDOW + WS_HSCROLL + WS_VSCROLL,\ 
                         CW_USEDEFAULT, CW_USEDEFAULT,\ 
-                        550,600,NULL,NULL, hInst,NULL 
+                        1100,650,NULL,NULL, hInst,NULL 
     
     mov   	hwnd, eax	; eax=valeur de retour de CreateWindowEx, copiée dans hwnd 
     
@@ -193,11 +224,11 @@ create:
         mov  hwndButton,eax
         invoke CreateWindowEx,NULL, ADDR ButtonClassName2,ADDR ButtonText2,\ 
                         WS_CHILD or WS_VISIBLE or BS_DEFPUSHBUTTON,\ 
-                        220,500,140,25,hWnd,ButtonID,hInstance,NULL	; Création du contrôle BUTTON 
+                        220,500,140,25,hWnd,ButtonID2,hInstance,NULL	; Création du contrôle BUTTON 
         mov  hwndButton,eax
         invoke CreateWindowEx,NULL, ADDR ButtonClassName3,ADDR ButtonText3,\ 
                         WS_CHILD or WS_VISIBLE or BS_DEFPUSHBUTTON,\ 
-                        365,500,140,25,hWnd,ButtonID,hInstance,NULL	; Création du contrôle BUTTON 
+                        365,500,140,25,hWnd,ButtonID3,hInstance,NULL	; Création du contrôle BUTTON 
         mov  hwndButton,eax
    	jmp fin_messages
    	
@@ -220,8 +251,13 @@ create:
         		invoke atol, addr buffer	; conversion du contenu du buffer en DWORD dans eax 
        			invoke GetWindowText,hwndEdit2,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
         		invoke atol, addr buffer2	; conversion du contenu du buffer en DWORD dans eax 
-      			invoke dwtoa, eax, addr buffer ; conversion de eax en chaîne de caractères dans buffer
-      			invoke MessageBox,NULL,ADDR buffer,ADDR AppName,MB_OK ; créaton d'une MessageBox avec buffer comme texte 
+      			invoke GetWindowText,hwndEdit3,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer3	; conversion du contenu du buffer en DWORD dans eax 
+        		invoke GetWindowText,hwndEdit4,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer4	; conversion du contenu du buffer en DWORD dans eax 
+        		invoke GetWindowText,hwndEdit5,ADDR buffer2,512	; récupération du contenu de l'EDIT dans buffer
+        		invoke atol, addr buffer5	; conversion du contenu du buffer en DWORD dans eax 
+      			
     
    
     paint:
@@ -230,22 +266,152 @@ create:
 			
 			mov x,0
 			mov y,0
-			boucle:;travailler ici!!!!!!!!!!!
-				invoke SetPixel,hdc,x,y,0FF00FFh	; affiche un point à la coordonnée (x,y) 
-													; de couleur FF00FF (BBVVRR) 
-													; où BB=niveau de bleu sur 2 octets
-													; où VV=niveau de vert sur 2 octets
-													; où RR=niveau de rouge sur 2 octets
-				inc x
-				inc y
-				cmp x,450
-				jne boucle
+			mov zoom,300
+        	mov iteration_max,30
 				
-        	invoke EndPaint, hWnd, ADDR ps ; fin du dessin de la fenêtre
+        	;invoke EndPaint, hWnd, ADDR ps  ;fin du dessin de la fenêtre
+			
+	fld x2; st(0)=x2
+	fsub x1; st(0)=x2-x1
+	fimul zoom; st(0)=(x2-x1)*zoom0
+	fstp image_x; image_x=(x2-x1)*zoom
+	;Pile vide
+	fld y2; st(0)=y2
+	fsub y1; st(0)=y2-y1
+	fimul zoom; st(0)=(y2-y1)*zoom
+	fstp image_y;  image_y=(y2-y1)*zoom
+	;Pile vide
+	
+	mov x,0
+	
+	boucle1:
+	mov y,0
+	
+		boucle12:
+		fild x; st(0)=x
+		
+		fidiv zoom; st(0)=x/zoom
+		
+		fadd x1; st(0)=x/zoom + x1
+		
+		fstp c_r; c_r=x/zoom + x1, pile vide
+		
+		fild y; st(0)=y
+		
+		fidiv zoom; st(0)=y/zoom
+		
+		fadd y1; st(0)=y/zoom + y1
+		
+		fstp c_i; c_i=y/zoom + y1, pile vide
+		
+		fldz; st(0)=0
+		
+		fst z_r; z_r=0
+		
+		fst z_i; z_i=0
+		
+		fistp i; i=0, pile vide
+		
+			boucle13:
+			
+			fld z_r; st(0)=z_r
+			
+			fst tmp; tmp=z_r, st(0)=z_r
+			
+			fmul z_r; st(0)=z_r*z_r
+			
+			fst r2; r2=z_r*z_r, st(0)=z_r*z_r
+			
+			fld z_i; st(0)=z_i, st(1)=z_r²
+			
+			fmul z_i; st(0)=z_i², st(1)=z_r²
+			
+			fstp i2; i2=z_i², st(0)=z_r²
+			
+			fsub i2; st(0)=z_r²-z_i²
+			
+			fadd c_r; st(0)=z_r²-z_i²+c_r
+			
+			fstp z_r; z_r=z_r²-z_i²+c_r, pile vide
+			
+			fld tmp; st(0)=tmp
+			
+			fmul z_i; st(0)=tmp*z_i
+			
+			fimul deux; st(0)=tmp*z_i*2
+			
+			fadd c_i; st(0)=tmp*z_i*2+c_i
+			
+			fstp z_i; z_i=tmp*z_i*2+c_i, pile vide
+			
+			inc i
+			
+			fld r2; st(0)=r2
+			
+			fld i2; st(0)=i2, st(0)=r2
+			
+			faddp st(1),st(0); st(0)=r2+i2
+			
+			fild quatre; st(0)=quatre, st(1)=r2+i2
+			
+			fcomip st(0),st(1); st(0)=r2+i2
+			
+			ja si1
+			
+			jmp si2
+			
+			si1:
+			fistp depile; depile=r2+i2, pile vide
+			fild i; st(0)=i
+			fild iteration_max; st(0)=iteration_max, st(1)=i
+			fcomip st(0),st(1); st(0)=i
+			jbe si2
+			fistp depile; depile=i, pile vide
+			jmp boucle13
+			
+			si2:
+			fistp depile; depile=i, pile vide
+			fild i; st(0)=i
+			fild iteration_max; st(0)=iteration_max, st(1)=i
+			fcomip st(0),st(1); st(0)=i
+			jne fin3
+			
+			invoke SetPixel, hdc, x, y, 00F0FFFh
+			
+		fin3:
+		fistp depile; depile=i, pile vide
+		fild y; st(0)=y
+		fld image_y; st(0)=image_y, st(1)=y
+		fcomip st(0),st(1); st(0)=y
+		jbe fin2
+		fistp depile; depile=y, pile vide
+		inc y
+		jmp boucle12
+		
+	fin2:
+	fistp depile; depile=y, pile vide
+
+	fild x; st(0)=x
+	fld image_x; st(0)=image_x, st(1)=x
+	fcomip st(0),st(1); st(0)=x
+	jbe fin
+	fistp depile; depile=x, pile vide
+	inc x
+	jmp boucle1
+	
+	fin:
+	fistp depile; poubelle=x, pile vide
+
+	
+	
+	
+		.while
+			
+		.endw
         	
     fin_messages:
     xor    eax,eax 
-    ret 
+    ret
 WndProc endp 
       	
 end start

@@ -51,7 +51,7 @@ MilestoneOnTime=2
 MilestoneOnDate=0
 MilestoneOnDateWhen=1
 MilestoneOnDateStatus=0
-MilestoneOnDateDate=19
+MilestoneOnDateDate=5
 MilestoneOnDateTimeYear=2014
 MilestoneOnDateTimeMonth=12
 MilestoneOnDateTimeDate=19
@@ -86,7 +86,7 @@ ProductVer4Range=0
 [Collapse]
 1=
 [Size]
-1=0,0,0,0,10358
+1=0,0,0,0,10663
 [BookMark]
 0=
 1=
@@ -102,8 +102,10 @@ ProductVer4Range=0
 0=
 [Find]
 1="hwndEdit1"
-2="EditID"
-3="ButtonID"
-4="buffer"
-5="AppName"
-6="ClassName"
+2="tet"
+3="fois"
+4="EditID"
+5="ButtonID"
+6="buffer"
+7="AppName"
+8="ClassName"
